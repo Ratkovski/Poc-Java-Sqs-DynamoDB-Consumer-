@@ -1,24 +1,27 @@
-package br.com.academy.ratkovski.demoConsumer.messaging;
+package br.com.academy.ratkovski.demoConsumer.messaging.impl;
 
 import br.com.academy.ratkovski.demoConsumer.domain.Json;
+import br.com.academy.ratkovski.demoConsumer.messaging.ConsumerSqs;
+import br.com.academy.ratkovski.demoConsumer.messaging.ConsumidorJsonSqs;
 import br.com.academy.ratkovski.demoConsumer.repository.DynamoDbRepository;
 import io.awspring.cloud.messaging.listener.SqsMessageDeletionPolicy;
 import io.awspring.cloud.messaging.listener.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
-@Log
-@Component
+@Slf4j
+@ConsumerSqs
 @RequiredArgsConstructor
-class ConsumidorDeJson {
+public class ConsumidorJsonSqsImp implements ConsumidorJsonSqs {
 
     private final DynamoDbRepository repository;
 
     @SqsListener(value = "fila_dados", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
-    void publicar(final Json json) {
-        repository.save(json);
-        log.info(String.format("Post %s publicado", json));
+    @Override
+    public void consumir(Json json) {
+            repository.save(json);
+            log.info(String.format("Post %s publicado", json));
+        }
+
     }
 
-}
